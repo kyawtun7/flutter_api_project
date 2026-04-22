@@ -16,7 +16,7 @@ const user = {
     name: "Kyaw Tun",
     email: "kyawtun@email.com",
     bio: "AI Student & Flutter Developer",
-    image: "https://i.pravatar.cc/150?img=3"
+    image: "https://i.pinimg.com/564x/8e/0b/9e/8e0b9e1207dd382176bce6853c46a2b8.jpg"
 };
 
 // MOVIES DATA
