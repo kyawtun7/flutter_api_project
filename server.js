@@ -8,7 +8,7 @@ app.use(express.json());
 
 const SECRET = "mysecretkey";
 
-// USER
+// USER DATA
 const user = {
     id: 1,
     username: "admin",
@@ -16,10 +16,10 @@ const user = {
     name: "Kyaw Tun",
     email: "kyawtun@email.com",
     bio: "AI Student & Flutter Developer",
-    image: "https://i.pinimg.com/564x/8e/0b/9e/8e0b9e1207dd382176bce6853c46a2b8.jpg"
+    image: "https://i.pravatar.cc/150?img=3"
 };
 
-// MOVIES DATA (with image + description)
+// MOVIES DATA
 const movies = [
     {
         id: 1,
@@ -44,7 +44,26 @@ const movies = [
     }
 ];
 
-// LOGIN
+
+// HOME ROUTE
+app.get('/', (req, res) => {
+    res.send("🚀 Movie API is running");
+});
+
+// DOCS ROUTE
+app.get('/docs', (req, res) => {
+    res.json({
+        endpoints: {
+            login: "POST /login",
+            movies: "GET /movies (token required)",
+            movieDetail: "GET /movies/:id",
+            profile: "GET /profile"
+        }
+    });
+});
+
+
+// LOGIN API
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
@@ -57,36 +76,47 @@ app.post('/login', (req, res) => {
             name: user.name
         });
     } else {
-        res.status(401).json({ message: "Invalid login" });
+        res.status(401).json({
+            status: "error",
+            message: "Invalid login"
+        });
     }
 });
 
-// AUTH
+
+// VERIFY TOKEN
 function verifyToken(req, res, next) {
     const token = req.headers['authorization'];
-    if (!token) return res.sendStatus(403);
+
+    if (!token) return res.status(403).json({ message: "No token" });
 
     jwt.verify(token, SECRET, (err, decoded) => {
-        if (err) return res.sendStatus(401);
+        if (err) return res.status(401).json({ message: "Invalid token" });
         req.userId = decoded.id;
         next();
     });
 }
 
-// MOVIES
+
+// GET ALL MOVIES
 app.get('/movies', verifyToken, (req, res) => {
     res.json(movies);
 });
 
-// SINGLE MOVIE
+
+// GET SINGLE MOVIE
 app.get('/movies/:id', verifyToken, (req, res) => {
     const movie = movies.find(m => m.id == req.params.id);
     res.json(movie);
 });
+
 
 // PROFILE
 app.get('/profile', verifyToken, (req, res) => {
     res.json(user);
 });
 
-app.listen(3000, () => console.log("Server running"));
+
+app.listen(3000, () => {
+    console.log("Server running on port 3000");
+});
